@@ -44,6 +44,7 @@
             <table class="table table-bordered table-striped">
                 <thead class="thead-dark">
                     <tr>
+                        <th></th>
                         <th>Nume</th>
                         <th>Stoc</th>
                         <th>Vezi detalii</th>
@@ -53,6 +54,7 @@
                 <tbody>
                     {% for produs in produse %}
                         <tr>
+                            <td>{{ loop.index }}</td> <!-- Display the order number -->
                             <td>{{ produs.nume }}</td>
                             <td>{{ produs.stoc }}</td>
                             <td>
@@ -60,13 +62,13 @@
                                 <a href="{{ path('app_product_out', {'id': produs.id}) }}" class="btn btn-danger btn-sm">Ieșiri</a>
                             </td>
                             <td>
-                                <a href="#" class="table-link">
+                                <a href="{{ path('app_edit_product', {'id': produs.id}) }}" class="table-link">
                                     <span class="fa-stack">
                                         <i class="fa fa-square fa-stack-2x"></i>
                                         <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
                                     </span>
                                 </a>
-                                <a href="#" class="table-link danger">
+                                <a href="{{ path('app_delete_product', {'id': produs.id}) }}" class="table-link danger">
                                     <span class="fa-stack">
                                         <i class="fa fa-square fa-stack-2x"></i>
                                         <i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>

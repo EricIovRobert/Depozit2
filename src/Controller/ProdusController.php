@@ -86,4 +86,47 @@ class ProdusController extends AbstractController
             'produs' => $produs,
         ]);
     }
+    #[Route('/produse/edit/{id}', name: 'app_edit_product')]
+    public function editProduct(int $id, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $produs = $entityManager->getRepository(Produs::class)->find($id);
+
+        if (!$produs) {
+            throw $this->createNotFoundException('Produsul nu a fost găsit.');
+        }
+
+        $form = $this->createForm(ProdusType::class, $produs);
+
+        $form->handleRequest($request);
+        if ($form->isSubmitted() && $form->isValid()) {
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_produse');
+        }
+
+        return $this->render('produse/edit.html.twig', [
+            'form' => $form->createView(),
+            'produs' => $produs,
+        ]);
+    }
+    #[Route('/produse/delete/{id}', name: 'app_delete_product')]
+    public function deleteProduct(int $id, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $produs = $entityManager->getRepository(Produs::class)->find($id);
+
+        if (!$produs) {
+            throw $this->createNotFoundException('Produsul nu a fost găsit.');
+        }
+
+        if ($request->getMethod() === 'POST') {
+            $entityManager->remove($produs);
+            $entityManager->flush();
+
+            return $this->redirectToRoute('app_produse');
+        }
+
+        return $this->render('produse/delete.html.twig', [
+            'produs' => $produs,
+        ]);
+    }
 }
