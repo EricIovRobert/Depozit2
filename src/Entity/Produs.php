@@ -19,6 +19,11 @@ class Produs
     private ?string $nume = null;
 
     #[ORM\Column]
+     /**
+     * @ORM\Column(type="integer")
+     * @Assert\NotBlank
+     * @Assert\GreaterThanOrEqual(value=0, message="Stocul nu poate fi sub 0.")
+     */
     private ?int $stoc = null;
 
     /**

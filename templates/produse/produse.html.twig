@@ -1,25 +1,83 @@
-
 {% extends 'base.html.twig' %}
 
 {% block title %}Produse{% endblock %}
 
-{% block body %}
-<h1>Produse</h1>
+{% block stylesheets %}
+    {{ parent() }}
+    <!-- Add Font Awesome CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <style>
+        /* Center the content inside each table cell */
+        .table td, .table th {
+            text-align: center;
+            vertical-align: middle;
+        }
 
-<table>
-    <thead>
-        <tr>
-            <th>Nume</th>
-            <th>Stoc</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for produs in produse %}
-            <tr>
-                <td>{{ produs.nume }}</td>
-                <td>{{ produs.stoc }}</td>
-            </tr>
-        {% endfor %}
-    </tbody>
-</table>
+        /* Style for the delete button */
+        .table-link.danger .fa-stack-2x {
+            color: #f44336; /* Red color */
+        }
+
+        /* Optional: Style the edit button (blue) */
+        .table-link .fa-stack-2x {
+            color: #007bff; /* Bootstrap primary blue color */
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="container">
+    <div class="row">
+        <div class="col-12 text-center">
+            <h1>Produse</h1>
+        </div>
+    </div>
+    <div class="container">
+    <div class="row mb-3">
+        <div class="col-12">
+            <a href="{{ path('app_add_product') }}" class="btn btn-primary">Adaugă produs</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-12">
+            <table class="table table-bordered table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th>Nume</th>
+                        <th>Stoc</th>
+                        <th>Vezi detalii</th>
+                        <th>Acțiuni</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for produs in produse %}
+                        <tr>
+                            <td>{{ produs.nume }}</td>
+                            <td>{{ produs.stoc }}</td>
+                            <td>
+                                <a href="{{ path('app_product_in', {'id': produs.id}) }}" class="btn btn-success btn-sm">Intrări</a>
+                                <a href="{{ path('app_product_out', {'id': produs.id}) }}" class="btn btn-danger btn-sm">Ieșiri</a>
+                            </td>
+                            <td>
+                                <a href="#" class="table-link">
+                                    <span class="fa-stack">
+                                        <i class="fa fa-square fa-stack-2x"></i>
+                                        <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                                <a href="#" class="table-link danger">
+                                    <span class="fa-stack">
+                                        <i class="fa fa-square fa-stack-2x"></i>
+                                        <i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
+                                    </span>
+                                </a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 {% endblock %}
