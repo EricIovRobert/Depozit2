@@ -27,6 +27,9 @@ class Iesire
     #[ORM\Column]
     private ?int $stoc_iesire = null;
 
+    #[ORM\Column]
+    private ?int $iesiri = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -76,6 +79,18 @@ class Iesire
     public function setStocIesire(int $stoc_iesire): static
     {
         $this->stoc_iesire = $stoc_iesire;
+
+        return $this;
+    }
+
+    public function getIesiri(): ?int
+    {
+        return $this->iesiri;
+    }
+
+    public function setIesiri(int $iesiri): static
+    {
+        $this->iesiri = $iesiri;
 
         return $this;
     }
