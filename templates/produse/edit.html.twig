@@ -15,8 +15,10 @@
         {{ form_label(form.stoc) }}
         {{ form_widget(form.stoc, {'attr': {'class': 'form-control', 'min': 0}}) }}
     </div>
+    <div class="d-flex justify-content-between">
     <button class="btn btn-primary">Salvează</button>
     <a href="{{ path('app_produse') }}" class="btn btn-secondary">Anulează</a>
+    </div>
     {{ form_end(form) }}
 </div>
 {% endblock %}

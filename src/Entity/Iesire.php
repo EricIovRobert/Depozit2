@@ -24,6 +24,9 @@ class Iesire
     #[ORM\JoinColumn(nullable: false)]
     private ?produs $produs = null;
 
+    #[ORM\Column]
+    private ?int $stoc_iesire = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -61,6 +64,18 @@ class Iesire
     public function setProdus(?produs $produs): static
     {
         $this->produs = $produs;
+
+        return $this;
+    }
+
+    public function getStocIesire(): ?int
+    {
+        return $this->stoc_iesire;
+    }
+
+    public function setStocIesire(int $stoc_iesire): static
+    {
+        $this->stoc_iesire = $stoc_iesire;
 
         return $this;
     }

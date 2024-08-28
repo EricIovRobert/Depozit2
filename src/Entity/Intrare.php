@@ -30,6 +30,9 @@ class Intrare
     #[ORM\Column]
     private ?int $nefolosibile = null;
 
+    #[ORM\Column]
+    private ?int $stoc_intrare = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -91,6 +94,18 @@ class Intrare
     public function setNefolosibile(int $nefolosibile): static
     {
         $this->nefolosibile = $nefolosibile;
+
+        return $this;
+    }
+
+    public function getStocIntrare(): ?int
+    {
+        return $this->stoc_intrare;
+    }
+
+    public function setStocIntrare(int $stoc_intrare): static
+    {
+        $this->stoc_intrare = $stoc_intrare;
 
         return $this;
     }
