@@ -1,16 +1,16 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Șterge Iesire{% endblock %}
+{% block title %}Șterge Ieșire{% endblock %}
 
 {% block body %}
 <div class="container">
-    <h1 class="text-center text-danger">Șterge Iesire</h1>
-    <p class="text-center">Ești sigur că vrei să ștergi i: <strong>{{ produs.nume }}</strong>?</p>
+    <h1 class="text-center text-danger">Șterge Ieșire</h1>
+    <p class="text-center">Ești sigur că vrei să ștergi ieșirea din data de: <strong>{{ iesire.data|date('Y-m-d') }}</strong>?</p>
 
-    <form method="post" action="{{ path('app_delete_iesire', {'id': produs.id}) }}">
+    <form method="post" action="{{ path('app_delete_iesire', {'id': iesire.id}) }}">
         <div class="text-center">
             <button type="submit" class="btn btn-danger">Confirmă</button>
-            <a href="{{ path('app_produse') }}" class="btn btn-secondary">Anulează</a>
+            <a href="{{ path('app_product_out', {'id': iesire.produs.id}) }}" class="btn btn-secondary">Anulează</a>
         </div>
     </form>
 </div>

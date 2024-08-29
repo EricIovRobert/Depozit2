@@ -220,7 +220,7 @@ public function addIntrare(int $id, Request $request, EntityManagerInterface $en
 }
 
     
-    #[Route('/intrare/{id}/edit', name: 'app_edit_intrare')]
+#[Route('/intrare/{id}/edit', name: 'app_edit_intrare')]
 public function editIntrare(int $id, Request $request, EntityManagerInterface $entityManager): Response
 {
     $intrare = $entityManager->getRepository(Intrare::class)->find($id);
@@ -229,13 +229,34 @@ public function editIntrare(int $id, Request $request, EntityManagerInterface $e
         throw $this->createNotFoundException('Intrarea nu a fost găsită.');
     }
 
+    // Stoc inițial al produsului înainte de modificare
+    $produs = $intrare->getProdus();
+    $stocInitial = $produs->getStoc();
+    
+    // Valorile inițiale ale intrării
+    $intrariInitiale = $intrare->getIntrari();
+    $nefolosibileInitiale = $intrare->getNefolosibile();
+    $stocActualDeLaIntrare = $intrariInitiale - $nefolosibileInitiale;
+
     $form = $this->createForm(IntrareType::class, $intrare);
 
     $form->handleRequest($request);
     if ($form->isSubmitted() && $form->isValid()) {
+        // Valorile actualizate
+        $intrariNoi = $intrare->getIntrari();
+        $nefolosibileNoi = $intrare->getNefolosibile();
+        $stocNouDeLaIntrare = $intrariNoi - $nefolosibileNoi;
+
+        // Ajustarea stocului produsului
+        $diferentaStoc = $stocNouDeLaIntrare - $stocActualDeLaIntrare;
+        $produs->setStoc($stocInitial + $diferentaStoc);
+
+        // Actualizarea stocului după intrare pentru intrarea editată
+        $intrare->setStocIntrare($produs->getStoc());
+
         $entityManager->flush();
 
-        return $this->redirectToRoute('app_product_in', ['id' => $intrare->getProdus()->getId()]);
+        return $this->redirectToRoute('app_product_in', ['id' => $produs->getId()]);
     }
 
     return $this->render('produse/intrare_edit.html.twig', [
@@ -254,18 +275,22 @@ public function deleteIntrare(int $id, Request $request, EntityManagerInterface 
     }
 
     if ($request->getMethod() === 'POST') {
-        if ($this->isCsrfTokenValid('delete' . $intrare->getId(), $request->request->get('_token'))) {
-            $entityManager->remove($intrare);
-            $entityManager->flush();
-        }
+        $produs = $intrare->getProdus();
+        $cantitateDeScazut = $intrare->getIntrari() - $intrare->getNefolosibile();
+        $produs->setStoc($produs->getStoc() - $cantitateDeScazut);
 
-        return $this->redirectToRoute('app_product_in', ['id' => $intrare->getProdus()->getId()]);
+        $entityManager->remove($intrare);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_product_in', ['id' => $produs->getId()]);
     }
 
     return $this->render('produse/delete_intrare.html.twig', [
         'intrare' => $intrare,
     ]);
 }
+
+
 
     #[Route('/produs/{id}/iesire/add', name: 'app_add_iesire')]
 public function addIesire(int $id, Request $request, EntityManagerInterface $entityManager): Response
@@ -307,48 +332,80 @@ public function addIesire(int $id, Request $request, EntityManagerInterface $ent
         'produs' => $produs,
     ]);
 }
+#[Route('/iesire/{id}/edit', name: 'app_edit_iesire')]
+public function editIesire(int $id, Request $request, EntityManagerInterface $entityManager): Response
+{
+    $iesire = $entityManager->getRepository(Iesire::class)->find($id);
 
+    if (!$iesire) {
+        throw $this->createNotFoundException('Ieșirea nu a fost găsită.');
+    }
 
-    #[Route('/iesire/{id}/edit', name: 'app_edit_iesire')]
-    public function editIesire(int $id, Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $iesire = $entityManager->getRepository(Iesire::class)->find($id);
+    // Stoc inițial al produsului înainte de modificare
+    $produs = $iesire->getProdus();
+    $stocInitial = $produs->getStoc();
+    
+    // Valorile inițiale ale ieșirii
+    $iesiriInitiale = $iesire->getIesiri();
 
-        if (!$iesire) {
-            throw $this->createNotFoundException('Ieșirea nu a fost găsită.');
-        }
+    $form = $this->createForm(IesireType::class, $iesire);
 
-        $form = $this->createForm(IesireType::class, $iesire);
+    $form->handleRequest($request);
+    if ($form->isSubmitted() && $form->isValid()) {
+        // Valorile actualizate
+        $iesiriNoi = $iesire->getIesiri();
 
-        $form->handleRequest($request);
-        if ($form->isSubmitted() && $form->isValid()) {
+        // Verificarea dacă numărul de ieșiri este negativ sau mai mare decât stocul curent
+        if ($iesiriNoi < 0) {
+            $this->addFlash('error', 'Numărul de ieșiri nu poate fi negativ.');
+        } elseif ($iesiriNoi > $stocInitial + $iesiriInitiale) {
+            $this->addFlash('error', 'Numărul de ieșiri nu poate fi mai mare decât stocul curent.');
+        } else {
+            // Ajustarea stocului produsului
+            $diferentaStoc = $iesiriInitiale - $iesiriNoi;
+            $stocNou = $stocInitial + $diferentaStoc;
+            $produs->setStoc($stocNou);
+
+            // Actualizarea stocului după ieșire pentru ieșirea editată
+            $iesire->setStocIesire($stocNou);
+
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_product_out', ['id' => $iesire->getProdus()->getId()]);
+            return $this->redirectToRoute('app_product_out', ['id' => $produs->getId()]);
         }
-
-        return $this->render('produse/iesire_edit.html.twig', [
-            'form' => $form->createView(),
-            'iesire' => $iesire,
-        ]);
-        
     }
-    #[Route('/iesire/{id}/delete', name: 'app_delete_iesire', methods: ['POST'])]
-    public function deleteIesire(int $id, Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $iesire = $entityManager->getRepository(Iesire::class)->find($id);
 
-        if (!$iesire) {
-            throw $this->createNotFoundException('Ieșirea nu a fost găsită.');
-        }
+    return $this->render('produse/iesire_edit.html.twig', [
+        'form' => $form->createView(),
+        'iesire' => $iesire,
+    ]);
+}
 
-        if ($this->isCsrfTokenValid('delete' . $iesire->getId(), $request->request->get('_token'))) {
-            $entityManager->remove($iesire);
-            $entityManager->flush();
-        }
 
-        return $this->redirectToRoute('app_product_out', ['id' => $iesire->getProdus()->getId()]);
+#[Route('/iesire/{id}/delete', name: 'app_delete_iesire')]
+public function deleteIesire(int $id, Request $request, EntityManagerInterface $entityManager): Response
+{
+    $iesire = $entityManager->getRepository(Iesire::class)->find($id);
+
+    if (!$iesire) {
+        throw $this->createNotFoundException('Ieșirea nu a fost găsită.');
     }
+
+    if ($request->getMethod() === 'POST') {
+        $produs = $iesire->getProdus();
+        $cantitateDeAdaugat = $iesire->getIesiri();
+        $produs->setStoc($produs->getStoc() + $cantitateDeAdaugat);
+
+        $entityManager->remove($iesire);
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_product_out', ['id' => $produs->getId()]);
+    }
+
+    return $this->render('produse/delete_iesire.html.twig', [
+        'iesire' => $iesire,
+    ]);
+}
 
 
 
