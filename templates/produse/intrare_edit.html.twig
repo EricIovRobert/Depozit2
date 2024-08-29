@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Intrare{% endblock %}
+
+{% block body %}
+    <div class="container mt-5">
+        {% if intrare.produs.available %}
+            <h1 class="text-center mb-4">Editează Intrare pentru {{ intrare.produs.nume }}</h1>
+
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    {{ form_start(form) }}
+                        <div class="form-group mb-3">
+                            {{ form_label(form.data, 'Date', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.data, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        <div class="form-group mb-3">
+                            {{ form_label(form.nr_doc_intrare, 'Document Number', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.nr_doc_intrare, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        <div class="form-group mb-3">
+                            {{ form_label(form.intrari, 'Entries', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.intrari, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        <div class="form-group mb-4">
+                            {{ form_label(form.nefolosibile, 'Non-usable', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.nefolosibile, {'attr': {'class': 'form-control'}}) }}
+                        </div>
+                        <div class="d-flex justify-content-center">
+                            <button class="btn btn-primary mx-2">Actualizează</button>
+                            <a href="{{ path('app_product_in', {id: intrare.produs.id}) }}" class="btn btn-secondary mx-2">Înapoi la Intrări</a>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-warning text-center">
+                <h3>Acest produs nu este disponibil pentru editarea intrărilor.</h3>
+                <a href="{{ path('app_produse') }}" class="btn btn-secondary mt-3">Înapoi la Produse</a>
+            </div>
+        {% endif %}
+    </div>
+{% endblock %}

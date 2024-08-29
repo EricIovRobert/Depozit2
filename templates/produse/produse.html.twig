@@ -4,23 +4,35 @@
 
 {% block stylesheets %}
     {{ parent() }}
-    <!-- Add Font Awesome CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <style>
-        /* Center the content inside each table cell */
         .table td, .table th {
             text-align: center;
             vertical-align: middle;
         }
 
-        /* Style for the delete button */
         .table-link.danger .fa-stack-2x {
-            color: #f44336; /* Red color */
+            color: #f44336;
         }
 
-        /* Optional: Style the edit button (blue) */
         .table-link .fa-stack-2x {
-            color: #007bff; /* Bootstrap primary blue color */
+            color: #007bff;
+        }
+
+        .unavailable {
+            background-color: #d3d3d3;
+            color: #6c757d;
+        }
+
+        .unavailable .actions-disabled {
+            pointer-events: none;
+            color: #6c757d;
+        }
+
+        .pagination .disabled .page-link {
+            pointer-events: none;
+            cursor: not-allowed;
+            color: #6c757d;
         }
     </style>
 {% endblock %}
@@ -33,52 +45,77 @@
         </div>
     </div>
     <div class="container">
-    <div class="row mb-3">
-        <div class="col-12">
-            <a href="{{ path('app_add_product') }}" class="btn btn-primary">Adaugă produs</a>
+        <div class="row mb-3">
+            <div class="col-4">
+                <a href="{{ path('app_add_product') }}" class="btn btn-primary">Adaugă produs</a>
+            </div>
+            <div class="col-4">
+                <form method="get" action="{{ path('app_produse') }}">
+                    <input type="text" name="search" class="form-control" placeholder="Caută produs..." value="{{ search }}">
+                </form>
+            </div>
+            <div class="col-4 text-right">
+                <form method="get" action="{{ path('app_produse') }}">
+                    <select name="filter" class="form-control">
+                        <option value="">Afisează toate produsele</option>
+                        <option value="deleted" {% if filter == 'deleted' %}selected{% endif %}>Afisează produsele șterse</option>
+                        <option value="available" {% if filter == 'available' %}selected{% endif %}>Afisează doar produse disponibile</option>
+                    </select>
+                    <button type="submit" class="btn btn-secondary mt-2">Aplică filtrul</button>
+                </form>
+            </div>
         </div>
-    </div>
 
-    <div class="row">
-        <div class="col-12">
-            <table class="table table-bordered table-striped">
-                <thead class="thead-dark">
-                    <tr>
-                        <th></th>
-                        <th>Nume</th>
-                        <th>Stoc</th>
-                        <th>Vezi detalii</th>
-                        <th>Acțiuni</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for produs in produse %}
+        <div class="row">
+            <div class="col-12">
+                <table class="table table-bordered table-striped">
+                    <thead class="thead-dark">
                         <tr>
-                            <td>{{ loop.index }}</td> <!-- Display the order number -->
-                            <td>{{ produs.nume }}</td>
-                            <td>{{ produs.stoc }}</td>
-                            <td>
-                                <a href="{{ path('app_product_in', {'id': produs.id}) }}" class="btn btn-success btn-sm">Intrări</a>
-                                <a href="{{ path('app_product_out', {'id': produs.id}) }}" class="btn btn-danger btn-sm">Ieșiri</a>
-                            </td>
-                            <td>
-                                <a href="{{ path('app_edit_product', {'id': produs.id}) }}" class="table-link">
-                                    <span class="fa-stack">
-                                        <i class="fa fa-square fa-stack-2x"></i>
-                                        <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
-                                    </span>
-                                </a>
-                                <a href="{{ path('app_delete_product', {'id': produs.id}) }}" class="table-link danger">
-                                    <span class="fa-stack">
-                                        <i class="fa fa-square fa-stack-2x"></i>
-                                        <i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
-                                    </span>
-                                </a>
-                            </td>
+                            <th></th>
+                            <th>Nume</th>
+                            <th>Stoc</th>
+                            <th>Vezi detalii</th>
+                            <th>Acțiuni</th>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        {% for produs in pagination.items %}
+                            <tr class="{% if not produs.available %}unavailable{% endif %}">
+                                <td>{{ loop.index + (pagination.currentPageNumber - 1) * pagination.itemNumberPerPage }}</td>
+                                <td>{{ produs.nume }}</td>
+                                <td>{{ produs.stoc }}</td>
+                                <td>
+                                    <a href="{{ path('app_product_in', {'id': produs.id}) }}" class="btn btn-success btn-sm">Intrări</a>
+                                    <a href="{{ path('app_product_out', {'id': produs.id}) }}" class="btn btn-danger btn-sm">Ieșiri</a>
+                                </td>
+                                <td>
+                                    {% if produs.available %}
+                                        <a href="{{ path('app_edit_product', {'id': produs.id}) }}" class="table-link">
+                                            <span class="fa-stack">
+                                                <i class="fa fa-square fa-stack-2x"></i>
+                                                <i class="fa fa-pencil fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                        </a>
+                                        <a href="{{ path('app_delete_product', {'id': produs.id}) }}" class="table-link danger">
+                                            <span class="fa-stack">
+                                                <i class="fa fa-square fa-stack-2x"></i>
+                                                <i class="fa fa-trash-o fa-stack-1x fa-inverse"></i>
+                                            </span>
+                                        </a>
+                                    {% else %}
+                                        <span class="text-muted actions-disabled">Unavailable</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+
+                <!-- Pagination controls -->
+                <div class="navigation d-flex justify-content-center">
+                    {{ knp_pagination_render(pagination) }}
+                </div>
+            </div>
         </div>
     </div>
 </div>

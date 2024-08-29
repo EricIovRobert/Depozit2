@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Ieșiri for {{ produs.nume }}{% endblock %}
+
+{% block body %}
+    <h1>Ieșiri for {{ produs.nume }}</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Date</th>
+                <th>Document Number</th>
+                <th>Exits</th>
+                <th>Stock After Exit</th>
+                {% if produs.available %}
+                    <th>Actions</th>
+                {% endif %}
+            </tr>
+        </thead>
+        <tbody>
+            {% for iesire in pagination.items %}
+                <tr>
+                    <td>{{ iesire.id }}</td>
+                    <td>{{ iesire.data|date('Y-m-d') }}</td>
+                    <td>{{ iesire.nrDocIesire }}</td>
+                    <td>{{ iesire.iesiri }}</td>
+                    <td>{{ iesire.stocIesire }}</td>
+                    {% if produs.available %}
+                        <td>
+                            <a href="{{ path('app_edit_iesire', {id: iesire.id}) }}" class="btn btn-primary">Edit</a>
+                            <form action="{{ path('app_delete_iesire', {id: iesire.id}) }}" method="post" style="display:inline-block;">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ iesire.id) }}">
+                                <button class="btn btn-danger">Delete</button>
+                            </form>
+                        </td>
+                    {% endif %}
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="7">No exits found for this product.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="navigation d-flex justify-content-center">
+        {{ knp_pagination_render(pagination) }}
+    </div>
+
+    {% if produs.available %}
+        <a href="{{ path('app_add_iesire', {id: produs.id}) }}" class="btn btn-success">Add New Iesire</a>
+    {% endif %}
+    <a href="{{ path('app_produse') }}" class="btn btn-secondary">Back to Products</a>
+{% endblock %}

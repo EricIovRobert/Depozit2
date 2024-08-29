@@ -25,7 +25,7 @@ class Intrare
 
     #[ORM\ManyToOne(inversedBy: 'intrare')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?produs $produs = null;
+    private ?Produs $produs = null;
 
     #[ORM\Column]
     private ?int $nefolosibile = null;

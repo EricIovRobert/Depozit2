@@ -1,0 +1,11 @@
+knp_paginator:
+    page_range: 5                       # How many pages to display in the pagination controls
+    default_options:
+        page_name: page                 # The name of the query parameter for the page number
+        sort_field_name: sort           # The name of the query parameter for the sorting field
+        sort_direction_name: direction  # The name of the query parameter for the sorting direction
+        filter_field_name: filterParam  # The name of the query parameter for filtering
+        distinct: true                  # Ensure distinct results (useful when ORM queries join tables)
+    template:
+        pagination: '@KnpPaginator/Pagination/twitter_bootstrap_v4_pagination.html.twig'  # Use the Bootstrap 4 pagination template
+        sortable: '@KnpPaginator/Pagination/sortable_link.html.twig'

@@ -22,7 +22,7 @@ class Iesire
 
     #[ORM\ManyToOne(inversedBy: 'iesire')]
     #[ORM\JoinColumn(nullable: false)]
-    private ?produs $produs = null;
+    private ?Produs $produs = null;
 
     #[ORM\Column]
     private ?int $stoc_iesire = null;

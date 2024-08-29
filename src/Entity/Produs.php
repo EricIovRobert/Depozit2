@@ -38,6 +38,21 @@ class Produs
     #[ORM\OneToMany(targetEntity: Iesire::class, mappedBy: 'produs')]
     private Collection $iesire;
 
+    #[ORM\Column(type: 'boolean')]
+    private bool $available = true;
+
+    public function isAvailable(): bool
+    {
+        return $this->available;
+    }
+
+    public function setAvailable(bool $available): self
+    {
+        $this->available = $available;
+
+        return $this;
+    }
+
     public function __construct()
     {
         $this->intrare = new ArrayCollection();
