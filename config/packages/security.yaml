@@ -39,6 +39,7 @@ security:
          - { path: ^/produs.*$, roles: IS_AUTHENTICATED_FULLY }
          - { path: ^/intrare.*$, roles: IS_AUTHENTICATED_FULLY }
          - { path: ^/iesire.*$, roles: IS_AUTHENTICATED_FULLY }
+         - { path: ^/adaugare-produs$, roles: IS_AUTHENTICATED_FULLY }
 
 when@test:
     security:
