@@ -1,28 +1,28 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Intrari for {{ produs.nume }}{% endblock %}
+{% block title %}Intrări pentru {{ produs.nume }}{% endblock %}
 
 {% block body %}
-    <h1>Intrari for {{ produs.nume }}</h1>
-
+    <h1>Intrări pentru {{ produs.nume }}</h1>
+    </br>
     <table class="table">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Date</th>
-                <th>Document Number</th>
-                <th>Entries</th>
-                <th>Non-usable</th>
-                <th>Stock After Entry</th>
+                <th></th>
+                <th>Data</th>
+                <th>Număr Document</th>
+                <th>Intrări</th>
+                <th>Neutilizabile</th>
+                <th>Stoc După Intrare</th>
                 {% if produs.available %}
-                    <th>Actions</th>
+                    <th>Acțiuni</th>
                 {% endif %}
             </tr>
         </thead>
         <tbody>
             {% for intrare in pagination.items %}
                 <tr>
-                    <td>{{ intrare.id }}</td>
+                    <td>{{ loop.index }}</td>
                     <td>{{ intrare.data|date('Y-m-d') }}</td>
                     <td>{{ intrare.nrDocIntrare }}</td>
                     <td>{{ intrare.intrari }}</td>
@@ -30,17 +30,17 @@
                     <td>{{ intrare.stocIntrare }}</td>
                     {% if produs.available %}
                         <td>
-                            <a href="{{ path('app_edit_intrare', {id: intrare.id}) }}" class="btn btn-primary">Edit</a>
+                            <a href="{{ path('app_edit_intrare', {id: intrare.id}) }}" class="btn btn-primary">Editează</a>
                             <form action="{{ path('app_delete_intrare', {id: intrare.id}) }}" method="post" style="display:inline-block;">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ intrare.id) }}">
-                                <button class="btn btn-danger">Delete</button>
+                                <button class="btn btn-danger">Șterge</button>
                             </form>
                         </td>
                     {% endif %}
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="7">No entries found for this product.</td>
+                    <td colspan="7">Nu au fost găsite intrări pentru acest produs.</td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -51,7 +51,7 @@
     </div>
 
     {% if produs.available %}
-        <a href="{{ path('app_add_intrare', {id: produs.id}) }}" class="btn btn-success">Add New Intrare</a>
+        <a href="{{ path('app_add_intrare', {id: produs.id}) }}" class="btn btn-success">Adaugă Intrare Nouă</a>
     {% endif %}
-    <a href="{{ path('app_produse') }}" class="btn btn-secondary">Back to Products</a>
+    <a href="{{ path('app_produse') }}" class="btn btn-secondary">Înapoi la Produse</a>
 {% endblock %}

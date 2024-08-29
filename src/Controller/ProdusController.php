@@ -244,15 +244,16 @@ public function editIntrare(int $id, Request $request, EntityManagerInterface $e
     ]);
 }
 
-    #[Route('/intrare/{id}/delete', name: 'app_delete_intrare', methods: ['POST'])]
-    public function deleteIntrare(int $id, Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $intrare = $entityManager->getRepository(Intrare::class)->find($id);
+#[Route('/intrare/{id}/delete', name: 'app_delete_intrare')]
+public function deleteIntrare(int $id, Request $request, EntityManagerInterface $entityManager): Response
+{
+    $intrare = $entityManager->getRepository(Intrare::class)->find($id);
 
-        if (!$intrare) {
-            throw $this->createNotFoundException('Intrarea nu a fost găsită.');
-        }
+    if (!$intrare) {
+        throw $this->createNotFoundException('Intrarea nu a fost găsită.');
+    }
 
+    if ($request->getMethod() === 'POST') {
         if ($this->isCsrfTokenValid('delete' . $intrare->getId(), $request->request->get('_token'))) {
             $entityManager->remove($intrare);
             $entityManager->flush();
@@ -260,6 +261,12 @@ public function editIntrare(int $id, Request $request, EntityManagerInterface $e
 
         return $this->redirectToRoute('app_product_in', ['id' => $intrare->getProdus()->getId()]);
     }
+
+    return $this->render('produse/delete_intrare.html.twig', [
+        'intrare' => $intrare,
+    ]);
+}
+
     #[Route('/produs/{id}/iesire/add', name: 'app_add_iesire')]
 public function addIesire(int $id, Request $request, EntityManagerInterface $entityManager): Response
 {

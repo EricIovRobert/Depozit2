@@ -1,44 +1,44 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Ieșiri for {{ produs.nume }}{% endblock %}
+{% block title %}Ieșiri pentru {{ produs.nume }}{% endblock %}
 
 {% block body %}
-    <h1>Ieșiri for {{ produs.nume }}</h1>
-
+    <h1>Ieșiri pentru {{ produs.nume }}</h1>
+    </br>
     <table class="table">
         <thead>
             <tr>
-                <th>ID</th>
-                <th>Date</th>
-                <th>Document Number</th>
-                <th>Exits</th>
-                <th>Stock After Exit</th>
+                <th></th>
+                <th>Data</th>
+                <th>Număr document</th>
+                <th>Ieșiri</th>
+                <th>Stoc după ieșire</th>
                 {% if produs.available %}
-                    <th>Actions</th>
+                    <th>Acțiuni</th>
                 {% endif %}
             </tr>
         </thead>
         <tbody>
             {% for iesire in pagination.items %}
                 <tr>
-                    <td>{{ iesire.id }}</td>
+                    <td>{{ loop.index }}</td>
                     <td>{{ iesire.data|date('Y-m-d') }}</td>
                     <td>{{ iesire.nrDocIesire }}</td>
                     <td>{{ iesire.iesiri }}</td>
                     <td>{{ iesire.stocIesire }}</td>
                     {% if produs.available %}
                         <td>
-                            <a href="{{ path('app_edit_iesire', {id: iesire.id}) }}" class="btn btn-primary">Edit</a>
+                            <a href="{{ path('app_edit_iesire', {id: iesire.id}) }}" class="btn btn-primary">Editează</a>
                             <form action="{{ path('app_delete_iesire', {id: iesire.id}) }}" method="post" style="display:inline-block;">
                                 <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ iesire.id) }}">
-                                <button class="btn btn-danger">Delete</button>
+                                <button class="btn btn-danger">Șterge</button>
                             </form>
                         </td>
                     {% endif %}
                 </tr>
             {% else %}
                 <tr>
-                    <td colspan="7">No exits found for this product.</td>
+                    <td colspan="7">Nu au fost găsite ieșiri pentru acest produs.</td>
                 </tr>
             {% endfor %}
         </tbody>
@@ -49,7 +49,7 @@
     </div>
 
     {% if produs.available %}
-        <a href="{{ path('app_add_iesire', {id: produs.id}) }}" class="btn btn-success">Add New Iesire</a>
+        <a href="{{ path('app_add_iesire', {id: produs.id}) }}" class="btn btn-success">Adaugă ieșire nouă</a>
     {% endif %}
-    <a href="{{ path('app_produse') }}" class="btn btn-secondary">Back to Products</a>
+    <a href="{{ path('app_produse') }}" class="btn btn-secondary">Înapoi la produse</a>
 {% endblock %}
