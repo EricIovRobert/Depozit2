@@ -23,7 +23,7 @@
             {% for intrare in pagination.items %}
                 <tr>
                     <td>{{ loop.index }}</td>
-                    <td>{{ intrare.data|date('Y-m-d') }}</td>
+                    <td>{{ intrare.data|date('d.m.Y') }}</td>
                     <td>{{ intrare.nrDocIntrare }}</td>
                     <td>{{ intrare.intrari }}</td>
                     <td>{{ intrare.nefolosibile }}</td>

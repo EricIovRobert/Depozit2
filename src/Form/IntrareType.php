@@ -17,7 +17,14 @@ class IntrareType extends AbstractType
         $builder
             ->add('data', DateType::class, [
                 'widget' => 'single_text',
+                'html5' => false, // disable HTML5 date picker
+                'format' => 'dd/MM/yyyy', // Symfony default format for the date type
                 'label' => 'Date',
+                'attr' => [
+                    'class' => 'form-control',
+                    'placeholder' => 'dd/mm/yyyy',
+                    'id' => 'data' // we will use this id in the Twig file
+                ],
             ])
             ->add('nr_doc_intrare', TextType::class, [
                 'label' => 'Document Number',
@@ -28,7 +35,6 @@ class IntrareType extends AbstractType
             ->add('nefolosibile', IntegerType::class, [
                 'label' => 'Non-usable',
             ]);
-            // Note: stoc_intrare is removed from here since it will be calculated automatically.
     }
 
     public function configureOptions(OptionsResolver $resolver): void

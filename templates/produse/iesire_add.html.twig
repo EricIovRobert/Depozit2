@@ -18,7 +18,7 @@
                     {{ form_start(form) }}
                         <div class="form-group mb-3">
                             {{ form_label(form.data, 'Data', {'label_attr': {'class': 'form-label'}}) }}
-                            {{ form_widget(form.data, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_widget(form.data, {'attr': {'class': 'form-control', 'id': 'data'}}) }}
                         </div>
                         <div class="form-group mb-3">
                             {{ form_label(form.nr_doc_iesire, 'Numar Document Iesire', {'label_attr': {'class': 'form-label'}}) }}
@@ -42,4 +42,40 @@
             </div>
         {% endif %}
     </div>
+
+    {% block javascripts %}
+        {{ parent() }}
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const dateInput = document.getElementById('data');
+
+                // Function to format the date as dd/mm/yyyy
+                function formatDate(date) {
+                    const d = new Date(date);
+                    const day = String(d.getDate()).padStart(2, '0');
+                    const month = String(d.getMonth() + 1).padStart(2, '0');
+                    const year = d.getFullYear();
+                    return `${day}/${month}/${year}`;
+                }
+
+                // Function to unformat the date from dd/mm/yyyy to yyyy-mm-dd
+                function unformatDate(dateStr) {
+                    const [day, month, year] = dateStr.split('/');
+                    return `${year}-${month}-${day}`;
+                }
+
+                // On load, format the date for display
+                if (dateInput.value) {
+                    dateInput.value = formatDate(dateInput.value);
+                }
+
+                // On form submit, reformat the date to the original format for submission
+                dateInput.form.addEventListener('submit', function() {
+                    if (dateInput.value) {
+                        dateInput.value = unformatDate(dateInput.value);
+                    }
+                });
+            });
+        </script>
+    {% endblock %}
 {% endblock %}

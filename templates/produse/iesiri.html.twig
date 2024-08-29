@@ -22,7 +22,7 @@
             {% for iesire in pagination.items %}
                 <tr>
                     <td>{{ loop.index }}</td>
-                    <td>{{ iesire.data|date('Y-m-d') }}</td>
+                    <td>{{ iesire.data|date('d.m.Y') }}</td>
                     <td>{{ iesire.nrDocIesire }}</td>
                     <td>{{ iesire.iesiri }}</td>
                     <td>{{ iesire.stocIesire }}</td>
