@@ -3,6 +3,18 @@
 {% block title %}Edit Intrare{% endblock %}
 
 {% block body %}
+    {% if not form.vars.valid %}
+        <div class="alert alert-danger">
+            {{ form_errors(form) }}
+            <ul>
+                {% for child in form %}
+                    {% if child.vars.errors is defined and child.vars.errors|length > 0 %}
+                        <li>{{ child.vars.errors[0].message }}</li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
     <div class="container mt-5">
         {% if intrare.produs.available %}
             <h1 class="text-center mb-4">Editează Intrare pentru {{ intrare.produs.nume }}</h1>
@@ -40,4 +52,39 @@
             </div>
         {% endif %}
     </div>
+{% endblock %}
+{% block javascripts %}
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const intrariField = document.querySelector('#intrare_intrari'); // Correct field ID for "intrari"
+            const nefolosibileField = document.querySelector('#intrare_nefolosibile'); // Correct field ID for "nefolosibile"
+            const form = document.querySelector('form');
+
+            // Create an error message element
+            let errorContainer = document.createElement('div');
+            errorContainer.style.color = 'red'; // Make the error message red
+            errorContainer.style.marginTop = '10px';
+            errorContainer.style.display = 'none'; // Hide it by default
+
+            // Insert the error container after the nefolosibile field
+            nefolosibileField.parentNode.appendChild(errorContainer);
+
+            form.addEventListener('submit', function (e) {
+                const intrariValue = parseInt(intrariField.value, 10);
+                const nefolosibileValue = parseInt(nefolosibileField.value, 10);
+
+                // Check if nefolosibile is greater than intrari
+                if (nefolosibileValue > intrariValue) {
+                    e.preventDefault(); // Prevent form submission
+
+                    // Show error message in Romanian
+                    errorContainer.textContent = 'Neutilizabile nu poate fi mai mare decât numărul de intrări.';
+                    errorContainer.style.display = 'block'; // Display the error message
+                } else {
+                    // Hide the error message if the validation passes
+                    errorContainer.style.display = 'none';
+                }
+            });
+        });
+    </script>
 {% endblock %}

@@ -6,7 +6,11 @@
     <div class="container mt-5">
         {% if iesire.produs.available %}
             <h1 class="text-center mb-4">Editează Ieșirea pentru {{ iesire.produs.nume }}</h1>
-
+            {% for message in app.flashes('error') %}
+                <div class="alert alert-danger text-center">
+                    {{ message }}
+                </div>
+            {% endfor %}
             <div class="row justify-content-center">
                 <div class="col-md-6">
                     {{ form_start(form) }}

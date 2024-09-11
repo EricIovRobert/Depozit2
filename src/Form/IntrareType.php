@@ -8,6 +8,9 @@ use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
+use Symfony\Component\Form\FormError;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class IntrareType extends AbstractType
@@ -17,13 +20,13 @@ class IntrareType extends AbstractType
         $builder
             ->add('data', DateType::class, [
                 'widget' => 'single_text',
-                'html5' => false, // disable HTML5 date picker
-                'format' => 'dd/MM/yyyy', // Symfony default format for the date type
+                'html5' => false,
+                'format' => 'dd/MM/yyyy',
                 'label' => 'Date',
                 'attr' => [
                     'class' => 'form-control',
                     'placeholder' => 'dd/mm/yyyy',
-                    'id' => 'data' // we will use this id in the Twig file
+                    'id' => 'data',
                 ],
             ])
             ->add('nr_doc_intrare', TextType::class, [
@@ -31,10 +34,29 @@ class IntrareType extends AbstractType
             ])
             ->add('intrari', IntegerType::class, [
                 'label' => 'Entries',
+                'attr' => [
+                    'class' => 'form-control',
+                    'id' => 'intrari',
+                ],
             ])
             ->add('nefolosibile', IntegerType::class, [
                 'label' => 'Non-usable',
+                'attr' => [
+                    'class' => 'form-control',
+                    'id' => 'nefolosibile',
+                ],
             ]);
+
+        // Add custom validation listener
+        $builder->addEventListener(FormEvents::POST_SUBMIT, function (FormEvent $event) {
+            $form = $event->getForm();
+            $intrari = $form->get('intrari')->getData();
+            $nefolosibile = $form->get('nefolosibile')->getData();
+
+            if ($nefolosibile > $intrari) {
+                $form->get('nefolosibile')->addError(new FormError('Non-usable value cannot be greater than the Entries value.'));
+            }
+        });
     }
 
     public function configureOptions(OptionsResolver $resolver): void
