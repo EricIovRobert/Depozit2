@@ -16,7 +16,7 @@
         {
             // Create a new user object
             $user = new User();
-            $user->setEmail('admin@gmail.com');
+            $user->setEmail('alexborzza@gmail.com');
 
             // Define the plaintext password
             $plaintextPassword = 'parola';

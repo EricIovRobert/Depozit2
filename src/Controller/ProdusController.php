@@ -407,6 +407,18 @@ public function deleteIesire(int $id, Request $request, EntityManagerInterface $
     ]);
 }
 
+#[Route('/iesire/{id}/delete/confirmation', name: 'app_delete_iesire_confirmation')]
+public function deleteIesireConfirmation(int $id, EntityManagerInterface $entityManager): Response
+{
+    $iesire = $entityManager->getRepository(Iesire::class)->find($id);
+    return $this->render('produse/delete_iesire.html.twig', ['iesire' => $iesire]);
+}
+#[Route('/intrare/{id}/delete/confirmation', name: 'app_delete_intrare_confirmation')]
+public function deleteIntrareConfirmation(int $id, EntityManagerInterface $entityManager): Response
+{
+    $intrare = $entityManager->getRepository(Intrare::class)->find($id);
+    return $this->render('produse/delete_intrare.html.twig', ['intrare' => $intrare]);
+}
 
 
 }

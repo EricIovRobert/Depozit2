@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Șterge Ieșire{% endblock %}
+{% block title %}Confirmă Ștergerea Ieșirii{% endblock %}
 
 {% block body %}
 <div class="container">
@@ -8,6 +8,7 @@
     <p class="text-center">Ești sigur că vrei să ștergi ieșirea din data de: <strong>{{ iesire.data|date('Y-m-d') }}</strong>?</p>
 
     <form method="post" action="{{ path('app_delete_iesire', {'id': iesire.id}) }}">
+        <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ iesire.id) }}">
         <div class="text-center">
             <button type="submit" class="btn btn-danger">Confirmă</button>
             <a href="{{ path('app_product_out', {'id': iesire.produs.id}) }}" class="btn btn-secondary">Anulează</a>

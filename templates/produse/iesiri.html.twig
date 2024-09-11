@@ -29,10 +29,7 @@
                     {% if produs.available %}
                         <td>
                             <a href="{{ path('app_edit_iesire', {id: iesire.id}) }}" class="btn btn-primary">Editează</a>
-                            <form action="{{ path('app_delete_iesire', {id: iesire.id}) }}" method="post" style="display:inline-block;">
-                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ iesire.id) }}">
-                                <button class="btn btn-danger">Șterge</button>
-                            </form>
+                            <a href="{{ path('app_delete_iesire_confirmation', {id: iesire.id}) }}" class="btn btn-danger">Șterge</a>
                         </td>
                     {% endif %}
                 </tr>
