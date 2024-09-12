@@ -17,7 +17,7 @@
                     {{ form_start(form) }}
                         <div class="form-group mb-3">
                             {{ form_label(form.data, 'Data', {'label_attr': {'class': 'form-label'}}) }}
-                            {{ form_widget(form.data, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_widget(form.data, {'attr': {'class': 'form-control', 'maxlength': 10}}) }}
                         </div>
                         <div class="form-group mb-3">
                             {{ form_label(form.nr_doc_intrare, 'Numar Document Intrare', {'label_attr': {'class': 'form-label'}}) }}
