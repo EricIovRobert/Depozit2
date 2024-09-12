@@ -3,22 +3,15 @@
 {% block title %}Edit Intrare{% endblock %}
 
 {% block body %}
-    {% if not form.vars.valid %}
-        <div class="alert alert-danger">
-            {{ form_errors(form) }}
-            <ul>
-                {% for child in form %}
-                    {% if child.vars.errors is defined and child.vars.errors|length > 0 %}
-                        <li>{{ child.vars.errors[0].message }}</li>
-                    {% endif %}
-                {% endfor %}
-            </ul>
-        </div>
-    {% endif %}
+    
     <div class="container mt-5">
         {% if intrare.produs.available %}
             <h1 class="text-center mb-4">Editează Intrare pentru {{ intrare.produs.nume }}</h1>
-
+             {% for message in app.flashes('error') %}
+                <div class="alert alert-danger text-center">
+                    {{ message }}
+                </div>
+            {% endfor %}
             <div class="row justify-content-center">
                 <div class="col-md-6">
                     {{ form_start(form) }}
@@ -32,11 +25,11 @@
                         </div>
                         <div class="form-group mb-3">
                             {{ form_label(form.intrari, 'Intrari', {'label_attr': {'class': 'form-label'}}) }}
-                            {{ form_widget(form.intrari, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_widget(form.intrari, {'attr': {'class': 'form-control', 'min': 0}}) }}
                         </div>
                         <div class="form-group mb-4">
                             {{ form_label(form.nefolosibile, 'Neutilizabile', {'label_attr': {'class': 'form-label'}}) }}
-                            {{ form_widget(form.nefolosibile, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_widget(form.nefolosibile, {'attr': {'class': 'form-control', 'min': 0}}) }}
                         </div>
                         <div class="d-flex justify-content-center">
                             <button class="btn btn-primary mx-2">Actualizează</button>

@@ -17,7 +17,7 @@ use Psr\Log\LoggerInterface;
 
 class ForgotPasswordController extends AbstractController
 {
-    #[Route('/forgot-password', name: 'app_forgot_password')]
+   
     public function forgotPassword(Request $request, MailerInterface $mailer, EntityManagerInterface $em, LoggerInterface $logger): Response
     {
         $form = $this->createFormBuilder()
@@ -90,7 +90,7 @@ class ForgotPasswordController extends AbstractController
     }
 
 
-    #[Route('/reset-password/{token}', name: 'app_reset_password')]
+
     public function resetPassword(Request $request, string $token, UserPasswordHasherInterface $passwordHasher, EntityManagerInterface $em): Response
     {
         // Find the user by the reset token

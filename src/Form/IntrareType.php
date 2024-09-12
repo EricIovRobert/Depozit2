@@ -53,9 +53,7 @@ class IntrareType extends AbstractType
             $intrari = $form->get('intrari')->getData();
             $nefolosibile = $form->get('nefolosibile')->getData();
 
-            if ($nefolosibile > $intrari) {
-                $form->get('nefolosibile')->addError(new FormError('Non-usable value cannot be greater than the Entries value.'));
-            }
+           
         });
     }
 

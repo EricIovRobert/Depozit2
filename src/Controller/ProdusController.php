@@ -242,6 +242,10 @@ public function editIntrare(int $id, Request $request, EntityManagerInterface $e
 
     $form->handleRequest($request);
     if ($form->isSubmitted() && $form->isValid()) {
+        if ($intrare->getIntrari() < $intrare->getNefolosibile()) {
+            $this->addFlash('error', 'Numărul de intrări nu poate fi mai mic decât numărul de articole nefolosibile.');
+        } 
+        else{
         // Valorile actualizate
         $intrariNoi = $intrare->getIntrari();
         $nefolosibileNoi = $intrare->getNefolosibile();
@@ -257,7 +261,7 @@ public function editIntrare(int $id, Request $request, EntityManagerInterface $e
         $entityManager->flush();
 
         return $this->redirectToRoute('app_product_in', ['id' => $produs->getId()]);
-    }
+    }}
 
     return $this->render('produse/intrare_edit.html.twig', [
         'form' => $form->createView(),
@@ -308,7 +312,10 @@ public function addIesire(int $id, Request $request, EntityManagerInterface $ent
 
     $form->handleRequest($request);
     if ($form->isSubmitted() && $form->isValid()) {
-        if ($iesire->getIesiri() > $produs->getStoc()) {
+        if($iesire->getIesiri()<0){
+            $this->addFlash('error', 'Numărul de ieșiri nu poate fi negativ');
+        }
+        elseif ($iesire->getIesiri() > $produs->getStoc()) {
             $this->addFlash('error', 'Numărul de ieșiri nu poate fi mai mare decât stocul disponibil.');
         } else {
             // Subtract the number of iesiri from the current product stock

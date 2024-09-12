@@ -5,7 +5,7 @@
 {% block body %}
 <div class="container">
     <h1 class="text-center text-danger">Șterge Ieșire</h1>
-    <p class="text-center">Ești sigur că vrei să ștergi ieșirea din data de: <strong>{{ iesire.data|date('Y-m-d') }}</strong>?</p>
+    <p class="text-center">Ești sigur că vrei să ștergi ieșirea din data de: <strong>{{ iesire.data|date('d-m-Y') }}</strong>?</p>
 
     <form method="post" action="{{ path('app_delete_iesire', {'id': iesire.id}) }}">
         <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ iesire.id) }}">
