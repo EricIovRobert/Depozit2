@@ -41,6 +41,9 @@ class Produs
     #[ORM\Column(type: 'boolean')]
     private bool $available = true;
 
+    #[ORM\Column]
+    private ?int $total = null;
+
     public function isAvailable(): bool
     {
         return $this->available;
@@ -144,6 +147,18 @@ class Produs
                 $iesire->setProdus(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getTotal(): ?int
+    {
+        return $this->total;
+    }
+
+    public function setTotal(int $total): static
+    {
+        $this->total = $total;
 
         return $this;
     }

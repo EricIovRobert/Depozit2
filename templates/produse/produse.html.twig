@@ -73,7 +73,9 @@
                         <tr>
                             <th></th>
                             <th>Nume</th>
-                            <th>Stoc</th>
+                            <th>Total Stoc</th>
+                            <th>Stoc curent</th>
+                            <th>Iesiri curente</th>
                             <th>Vezi detalii</th>
                             <th>Acțiuni</th>
                         </tr>
@@ -83,11 +85,22 @@
                             <tr class="{% if not produs.available %}unavailable{% endif %}">
                                 <td>{{ loop.index + (pagination.currentPageNumber - 1) * pagination.itemNumberPerPage }}</td>
                                 <td>{{ produs.nume }}</td>
+                                <td>{{ produs.total }}</td>
                                 <td>{{ produs.stoc }}</td>
                                 <td>
-                                    <a href="{{ path('app_product_in', {'id': produs.id}) }}" class="btn btn-success btn-sm">Intrări</a>
-                                    <a href="{{ path('app_product_out', {'id': produs.id}) }}" class="btn btn-danger btn-sm">Ieșiri</a>
+                                    {{ produs.total-produs.stoc }}
                                 </td>
+                               <td>
+                                    <div class="d-flex justify-content-center">
+                                        <a href="{{ path('app_product_in', {'id': produs.id}) }}" class="btn btn-success btn-sm mx-2">
+                                            Intrări
+                                        </a>
+                                        <a href="{{ path('app_product_out', {'id': produs.id}) }}" class="btn btn-danger btn-sm mx-2">
+                                            Ieșiri
+                                        </a>
+                                    </div>
+                                </td>
+
                                 <td>
                                     {% if produs.available %}
                                         <a href="{{ path('app_edit_product', {'id': produs.id}) }}" class="table-link">

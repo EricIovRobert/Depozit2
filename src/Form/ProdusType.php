@@ -14,6 +14,7 @@ class ProdusType extends AbstractType
         $builder
             ->add('nume')
             ->add('stoc')
+            ->add(child: 'total')
         ;
     }
 
