@@ -50,5 +50,6 @@
     {% if produs.available %}
         <a href="{{ path('app_add_intrare', {id: produs.id}) }}" class="btn btn-success">Adaugă Intrare Nouă</a>
     {% endif %}
-    <a href="{{ path('app_produse') }}" class="btn btn-secondary">Înapoi la Produse</a>
+    <a href="{{ path('app_produse', {'page': page}) }}" class="btn btn-secondary">Înapoi la Produse</a>
+
 {% endblock %}

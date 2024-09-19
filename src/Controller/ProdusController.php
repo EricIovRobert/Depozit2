@@ -25,6 +25,7 @@ public function index(Request $request, EntityManagerInterface $entityManager, P
 {
     $filter = $request->query->get('filter', '');
     $search = $request->query->get('search', '');
+    $page = $request->query->getInt('page', 1);  // Capture the current page
 
     $repository = $entityManager->getRepository(Produs::class);
 
@@ -43,19 +44,21 @@ public function index(Request $request, EntityManagerInterface $entityManager, P
         $queryBuilder->andWhere('p.available = true');
     }
 
-    // Paginate the results of the query
+    // Paginate the results
     $pagination = $paginator->paginate(
-        $queryBuilder->getQuery(), /* query NOT result */
-        $request->query->getInt('page', 1), /* page number */
-        30 /* limit per page */
+        $queryBuilder->getQuery(),
+        $page,  // Pass current page
+        30  // Number of items per page
     );
 
     return $this->render('produse/produse.html.twig', [
         'pagination' => $pagination,
         'filter' => $filter,
         'search' => $search,
+        'page' => $page  // Pass page to the view
     ]);
 }
+
 
     
     #[Route('/adaugare-produs', name: 'app_add_product')]
@@ -78,42 +81,48 @@ public function index(Request $request, EntityManagerInterface $entityManager, P
     }
 
     #[Route('/produs/{id}/intrari', name: 'app_product_in')]
-public function productIn(int $id, EntityManagerInterface $entityManager, PaginatorInterface $paginator, Request $request): Response
+public function productIn(int $id, Request $request, EntityManagerInterface $entityManager, PaginatorInterface $paginator): Response
 {
     $produs = $entityManager->getRepository(Produs::class)->find($id);
-
     if (!$produs) {
         throw $this->createNotFoundException('Produsul nu a fost găsit.');
     }
 
+    $page = $request->query->getInt('page', 1);  // Capture the page number
+
+    // Fetch entries (intrari) for the specific product
     $queryBuilder = $entityManager->getRepository(Intrare::class)
         ->createQueryBuilder('i')
         ->where('i.produs = :produs')
         ->setParameter('produs', $produs);
 
-    // Paginate the results
+    // Paginate the entries
     $pagination = $paginator->paginate(
         $queryBuilder->getQuery(),
-        $request->query->getInt('page', 1),
+        $page,  // Pass current page
         30
     );
 
     return $this->render('produse/intrari.html.twig', [
         'produs' => $produs,
         'pagination' => $pagination,
+        'page' => $page  // Pass page to the view
     ]);
 }
+
     
 
 #[Route('/produs/{id}/iesiri', name: 'app_product_out')]
-public function productOut(int $id, EntityManagerInterface $entityManager, PaginatorInterface $paginator, Request $request): Response
+public function productOut(int $id, Request $request, EntityManagerInterface $entityManager, PaginatorInterface $paginator): Response
 {
     $produs = $entityManager->getRepository(Produs::class)->find($id);
-
     if (!$produs) {
         throw $this->createNotFoundException('Produsul nu a fost găsit.');
     }
 
+    $page = $request->query->getInt('page', 1);  // Capture the page number
+
+    // Fetch exits (iesiri) for the specific product
     $queryBuilder = $entityManager->getRepository(Iesire::class)
         ->createQueryBuilder('e')
         ->where('e.produs = :produs')
@@ -122,15 +131,17 @@ public function productOut(int $id, EntityManagerInterface $entityManager, Pagin
     // Paginate the results
     $pagination = $paginator->paginate(
         $queryBuilder->getQuery(),
-        $request->query->getInt('page', 1),
+        $page,  // Pass current page
         30
     );
 
     return $this->render('produse/iesiri.html.twig', [
         'produs' => $produs,
         'pagination' => $pagination,
+        'page' => $page  // Pass page to the view
     ]);
 }
+
 
     #[Route('/produse/edit/{id}', name: 'app_edit_product')]
     public function editProduct(int $id, Request $request, EntityManagerInterface $entityManager): Response
