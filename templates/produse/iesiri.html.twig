@@ -48,5 +48,5 @@
     {% if produs.available %}
         <a href="{{ path('app_add_iesire', {id: produs.id}) }}" class="btn btn-success">Adaugă ieșire nouă</a>
     {% endif %}
-    <a href="{{ path('app_produse', {'page': page}) }}" class="btn btn-secondary">Înapoi la Produse</a>
+    <a href="{{ path('app_produse', {'page': back_page}) }}" class="btn btn-secondary">Înapoi la Produse</a>
 {% endblock %}

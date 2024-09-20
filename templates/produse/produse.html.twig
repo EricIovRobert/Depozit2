@@ -92,12 +92,13 @@
                                 </td>
                                <td>
                                     <div class="d-flex justify-content-center">
-                                       <a href="{{ path('app_product_in', {'id': produs.id, 'page': pagination.currentPageNumber}) }}" class="btn btn-success btn-sm mx-2">
+                                       <a href="{{ path('app_product_in', {'id': produs.id}) }}" class="btn btn-success btn-sm mx-2">
                                             Intrări
                                         </a>
-                                        <a href="{{ path('app_product_out', {'id': produs.id, 'page': pagination.currentPageNumber}) }}" class="btn btn-danger btn-sm mx-2">
+                                        <a href="{{ path('app_product_out', {'id': produs.id}) }}" class="btn btn-danger btn-sm mx-2">
                                             Ieșiri
                                         </a>
+
                                     </div>
                                 </td>
 
