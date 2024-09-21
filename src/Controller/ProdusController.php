@@ -109,7 +109,7 @@ public function productIn(int $id, Request $request, EntityManagerInterface $ent
     $pagination = $paginator->paginate(
         $queryBuilder->getQuery(),
         $page,  // Use the correct page number from the URL
-        1  // Number of items per page
+        30  // Number of items per page
     );
 
     return $this->render('produse/intrari.html.twig', [
@@ -139,7 +139,7 @@ public function productOut(int $id, Request $request, EntityManagerInterface $en
     $pagination = $paginator->paginate(
         $queryBuilder->getQuery(),
         $request->query->getInt('page', 1), // Capture the current page from the request
-        1  // Set the number of entries per page
+        30  // Set the number of entries per page
     );
 
     return $this->render('produse/iesiri.html.twig', [
