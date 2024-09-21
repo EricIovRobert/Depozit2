@@ -88,7 +88,12 @@
                                 <td>{{ produs.total }}</td>
                                 <td>{{ produs.stoc }}</td>
                                 <td>
-                                    {{ produs.total-produs.stoc }}
+                                {% set totalNef = 0%}
+                               {% for intrare in produs.intrare %}
+                                {% set totalNef = totalNef + intrare.nefolosibile %}
+                               {% endfor %}
+                                    
+                                    {{ produs.total- (produs.stoc + totalNef) }}
                                 </td>
                                <td>
                                     <div class="d-flex justify-content-center">

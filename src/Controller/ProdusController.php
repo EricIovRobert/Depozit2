@@ -88,7 +88,7 @@ public function addProduct(Request $request, EntityManagerInterface $entityManag
 }
 
 
-    #[Route('/produs/{id}/intrari', name: 'app_product_in')]
+#[Route('/produs/{id}/intrari', name: 'app_product_in')]
 public function productIn(int $id, Request $request, EntityManagerInterface $entityManager, PaginatorInterface $paginator, SessionInterface $session): Response
 {
     $produs = $entityManager->getRepository(Produs::class)->find($id);
@@ -96,27 +96,29 @@ public function productIn(int $id, Request $request, EntityManagerInterface $ent
         throw $this->createNotFoundException('Produsul nu a fost găsit.');
     }
 
-    // Retrieve the current page from the session (set when navigating from product list)
-    $page = $session->get('product_list_page', 1);
+    // Retrieve the current page number from the URL
+    $page = $request->query->getInt('page', 1);
 
+    // Paginate the entries
     $queryBuilder = $entityManager->getRepository(Intrare::class)
         ->createQueryBuilder('i')
         ->where('i.produs = :produs')
         ->setParameter('produs', $produs);
 
-    // Paginate the entries
+    // Paginate with the actual page number
     $pagination = $paginator->paginate(
         $queryBuilder->getQuery(),
-        1,  // Always start at page 1 for intrari
-        30
+        $page,  // Use the correct page number from the URL
+        1  // Number of items per page
     );
 
     return $this->render('produse/intrari.html.twig', [
         'produs' => $produs,
         'pagination' => $pagination,
-        'back_page' => $page  // Pass the page to the view for the back button
+        'back_page' => $session->get('product_list_page', 1)  // Pass the correct back page for "Înapoi la Produse"
     ]);
 }
+
 
 #[Route('/produs/{id}/iesiri', name: 'app_product_out')]
 public function productOut(int $id, Request $request, EntityManagerInterface $entityManager, PaginatorInterface $paginator, SessionInterface $session): Response
@@ -136,8 +138,8 @@ public function productOut(int $id, Request $request, EntityManagerInterface $en
 
     $pagination = $paginator->paginate(
         $queryBuilder->getQuery(),
-        1,  // Always start at page 1 for iesiri
-        30
+        $request->query->getInt('page', 1), // Capture the current page from the request
+        1  // Set the number of entries per page
     );
 
     return $this->render('produse/iesiri.html.twig', [
@@ -146,6 +148,7 @@ public function productOut(int $id, Request $request, EntityManagerInterface $en
         'back_page' => $page  // Pass the page to the view for the back button
     ]);
 }
+
 #[Route('/produse/edit/{id}', name: 'app_edit_product')]
 public function editProduct(int $id, Request $request, EntityManagerInterface $entityManager, SessionInterface $session): Response
 {
@@ -205,6 +208,7 @@ public function deleteProduct(int $id, Request $request, EntityManagerInterface 
 public function addIntrare(int $id, Request $request, EntityManagerInterface $entityManager, SessionInterface $session): Response
 {
     $produs = $entityManager->getRepository(Produs::class)->find($id);
+
     if (!$produs) {
         throw $this->createNotFoundException('Produsul nu a fost găsit.');
     }
@@ -213,11 +217,8 @@ public function addIntrare(int $id, Request $request, EntityManagerInterface $en
     $intrare->setProdus($produs);
 
     $form = $this->createForm(IntrareType::class, $intrare);
+
     $form->handleRequest($request);
-
-    // Retrieve the current page from the session
-    $back_page = $session->get('product_list_page', 1);
-
     if ($form->isSubmitted() && $form->isValid()) {
         if ($intrare->getIntrari() < $intrare->getNefolosibile()) {
             $this->addFlash('error', 'Numărul de intrări nu poate fi mai mic decât numărul de articole nefolosibile.');
@@ -226,22 +227,28 @@ public function addIntrare(int $id, Request $request, EntityManagerInterface $en
 
             // Update the product's stock after entry
             $newStock = $produs->getStoc() + $usableIntrari;
+
+            // Set the new stock in the Intrare entity
             $intrare->setStocIntrare($newStock);
+
+            // Update the product's stock to the new calculated value
             $produs->setStoc($newStock);
 
             $entityManager->persist($intrare);
             $entityManager->flush();
 
-            return $this->redirectToRoute('app_product_in', ['id' => $produs->getId(), 'page' => $back_page]);
+            // Redirect to the base "intrari" URL without the page parameter
+            return $this->redirectToRoute('app_product_in', ['id' => $produs->getId()]);
         }
     }
 
     return $this->render('produse/intrare_add.html.twig', [
         'form' => $form->createView(),
         'produs' => $produs,
-        'back_page' => $back_page // Pass back_page to the view for the "Back" button
     ]);
 }
+
+
 
 
     
@@ -321,7 +328,7 @@ public function deleteIntrare(int $id, Request $request, EntityManagerInterface 
 
 
 
-    #[Route('/produs/{id}/iesire/add', name: 'app_add_iesire')]
+#[Route('/produs/{id}/iesire/add', name: 'app_add_iesire')]
 public function addIesire(int $id, Request $request, EntityManagerInterface $entityManager): Response
 {
     $produs = $entityManager->getRepository(Produs::class)->find($id);
@@ -337,10 +344,9 @@ public function addIesire(int $id, Request $request, EntityManagerInterface $ent
 
     $form->handleRequest($request);
     if ($form->isSubmitted() && $form->isValid()) {
-        if($iesire->getIesiri()<0){
+        if($iesire->getIesiri() < 0){
             $this->addFlash('error', 'Numărul de ieșiri nu poate fi negativ');
-        }
-        elseif ($iesire->getIesiri() > $produs->getStoc()) {
+        } elseif ($iesire->getIesiri() > $produs->getStoc()) {
             $this->addFlash('error', 'Numărul de ieșiri nu poate fi mai mare decât stocul disponibil.');
         } else {
             // Subtract the number of iesiri from the current product stock
@@ -355,6 +361,7 @@ public function addIesire(int $id, Request $request, EntityManagerInterface $ent
             $entityManager->persist($iesire);
             $entityManager->flush();
 
+            // Redirect to the base "iesiri" URL without the page parameter
             return $this->redirectToRoute('app_product_out', ['id' => $produs->getId()]);
         }
     }
@@ -364,6 +371,7 @@ public function addIesire(int $id, Request $request, EntityManagerInterface $ent
         'produs' => $produs,
     ]);
 }
+
 #[Route('/iesire/{id}/edit', name: 'app_edit_iesire')]
 public function editIesire(int $id, Request $request, EntityManagerInterface $entityManager): Response
 {
